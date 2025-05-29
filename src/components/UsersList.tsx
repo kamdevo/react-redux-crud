@@ -1,5 +1,6 @@
 // 'use client';
-import { useSelector, UseSelector } from "react-redux";
+import { useAppSelector } from "../hooks/store";
+import { useState } from "react";
 import {
   Table,
   TableBody,
@@ -11,10 +12,20 @@ import {
   Badge,
 } from "@tremor/react";
 
+import { useUserActions } from "../hooks/useUserActions";
+
+import { CreateUser } from "./CreateUser";
+
 export function UsersList() {
-  const users = useSelector((state) => state.users);
+  const users = useAppSelector((state) => state.users);
+
+  const { handleRemoveUser } = useUserActions();
+
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <>
+      {isOpen && <CreateUser onClose={() => setIsOpen(false)} />}
       <div className="sm:flex sm:items-center sm:justify-between sm:space-x-10">
         <div>
           <h3 className=" flex gap-2 font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
@@ -26,10 +37,11 @@ export function UsersList() {
           </p>
         </div>
         <button
+          onClick={() => setIsOpen(true)}
           type="button"
           className="mt-4 w-full whitespace-nowrap rounded-tremor-small bg-tremor-brand px-4 py-2.5 text-tremor-default font-medium text-tremor-brand-inverted shadow-tremor-input hover:bg-tremor-brand-emphasis dark:bg-dark-tremor-brand dark:text-dark-tremor-brand-inverted dark:shadow-dark-tremor-input dark:hover:bg-dark-tremor-brand-emphasis sm:mt-0 sm:w-fit"
         >
-          Add workspace
+          Add user
         </button>
       </div>
       <Table className="mt-8">
@@ -80,6 +92,8 @@ export function UsersList() {
                 </button>
                 <button type="button">
                   <svg
+                    aria-label="Delete"
+                    onClick={() => handleRemoveUser(item.id)}
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"

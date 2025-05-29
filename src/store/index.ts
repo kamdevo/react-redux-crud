@@ -1,10 +1,22 @@
 import { configureStore } from "@reduxjs/toolkit";
 import usersReducer from "./users/slice";
+
+
+const persistenceMiddleWare = (store) => (next) => (action) => {
+
+    next(action);
+    localStorage.setItem("__redux__state__", JSON.stringify(store.getState().users));
+}
+
+
+
 export const store = configureStore({
     reducer: {
         users: usersReducer,
-    }, // Add reducers here
+    },
+    middleware: (getDefaultMiddleware) => {return getDefaultMiddleware().concat(persistenceMiddleWare)
+  },
 })
 
-// Infer the `RootState` and `AppDispatch` types from the store itself
-export type RootState = ReturnType<typeof store.getState>;
+export type RootState = ReturnType<typeof store.getState>
+export type AppDispatch = typeof store.dispatch
